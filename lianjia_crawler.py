@@ -14,14 +14,14 @@ USED_LIST = ['重庆']
 
 
 def save_data(data, filename):
-    with open("./data/"+filename + ".json", 'w', encoding="utf8") as f:
+    with open("./data/" + filename + ".json", 'w', encoding="utf8") as f:
         f.write(json.dumps(data, indent=2, ensure_ascii=False))
 
 
 # 需要先在本地开启代理池
 # 代理池仓库: https://github.com/Python3WebSpider/ProxyPool
 def get_valid_ip():
-    url = "http://localhost:6379/get"
+    url = "http://127.0.0.1:6379/get"
     try:
         ip = requests.get(url).text
         return ip
@@ -164,6 +164,7 @@ def main():
 
         save_data(detail_list, city_dic['capital'])
         detail_list.clear()
+
 
 if __name__ == '__main__':
     main()

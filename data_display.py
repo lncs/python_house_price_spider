@@ -88,14 +88,13 @@ def display_data(city_name, data_dic):
         plt.text(rect.get_x() + rect.get_width() / 2, height + 1, str(height), ha="center", va="bottom")
     # plt.show('1366*768')
 
-
-    plt.savefig('./result/'+title+'.png')
+    plt.savefig('./result/' + title + '.png')
 
 
 def main():
     file_list = os.listdir("./data")
     for i in range(len(file_list)):
-        path = os.path.join('./data/'+file_list[i])
+        path = os.path.join('./data/' + file_list[i])
         file_name = os.path.splitext(file_list[i])[0]
         print(path)
         print(file_name)
@@ -106,6 +105,8 @@ def main():
         display_data(file_name, area_data)
 
     print(file_list)
+
+
 if __name__ == '__main__':
     # data_dic = load_data('result/杭州.json')
     # print(type(data_dic))
