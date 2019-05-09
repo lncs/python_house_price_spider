@@ -8,13 +8,18 @@ from pyquery import PyQuery as pq
 from concurrent.futures import ThreadPoolExecutor
 import json
 import constant
+import os
+import time
 
-# USED_LIST = ['成都', '杭州', '重庆', '北京', '上海', '长沙', '西安', '兰州', ]
-USED_LIST = ['重庆']
+USED_LIST = ['成都', '杭州', '重庆', '北京', '上海', '长沙', '西安', '兰州', ]
+# USED_LIST = ['重庆']
 
 
 def save_data(data, filename):
-    with open("./data/" + filename + ".json", 'w', encoding="utf8") as f:
+    if False == os.path.exists("./data/"):
+        os.mkdir("./data/")
+    dest_name = "./data/" + filename + '(' +time.strftime("%Y-%m-%d") + ").json"
+    with open(dest_name, 'w', encoding="utf8") as f:
         f.write(json.dumps(data, indent=2, ensure_ascii=False))
 
 

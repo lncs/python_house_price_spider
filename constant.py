@@ -4,7 +4,7 @@
 # Software: PyCharm
 
 import pinyin
-
+import os
 # 全国各省市的xinxi
 # ref: https://github.com/baixuexiyang/geocoord
 _PROVINCE_INFO = [
@@ -57,12 +57,14 @@ PROVINCE_INFO = [
      } for item in _PROVINCE_INFO
 ]
 
+
 def get_all_info():
     all_info = []
     for city in PROVINCE_INFO:
         # print(city)
         all_info.append(city)
     return all_info
+
 
 def get_info(in_param):
     result_info = []
@@ -88,6 +90,13 @@ def get_info(in_param):
                 result_info.append(tmp)
     return result_info
 
+
+def create_folder(dir_name):
+    print(os.path.exists(dir_name))
+    if False == os.path.exists(dir_name):
+        os.mkdir(dir_name)
+
+
 if __name__ == '__main__':
 
     USED_LIST = [
@@ -101,3 +110,4 @@ if __name__ == '__main__':
         '兰州',
     ]
     print(get_info(USED_LIST))
+    create_folder('test')

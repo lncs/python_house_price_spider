@@ -6,8 +6,11 @@ import json
 import matplotlib.pyplot as plt
 import matplotlib
 import os
+
 # 设置中文字体和负号正常显示
 matplotlib.rcParams['font.sans-serif'] = ['SimHei']
+# matplotlib.rcParams['font.sans-serif'] = ['FangSong'] # 指定默认字体
+matplotlib.rcParams['axes.unicode_minus'] = False  # 解决保存图像是负号'-'显示为方块的问题
 
 
 def load_data(filename):
@@ -44,7 +47,7 @@ def split_data(data_dic):
     return area_data
 
 
-def display_data(city_name, data_dic):
+def display_data(file_name, data_dic):
     max = []
     min = []
     average = []
@@ -74,9 +77,10 @@ def display_data(city_name, data_dic):
     """
     plt.xticks([index + 0.25 for index in x], label_list)
     plt.xlabel("区域")
-    title = "{}二手房价格分析图".format(city_name)
+    title = "{}二手房价格分析图".format(file_name)
     plt.title(title)
-    plt.legend(loc=1)  # 设置题注 # 编辑文本
+    # plt.legend(loc=1)  # 设置题注 # 编辑文本
+    plt.legend()
     for rect in rects1:
         height = rect.get_height()
         plt.text(rect.get_x() + rect.get_width() / 2, height + 1, str(height), ha="center", va="bottom")
@@ -88,6 +92,8 @@ def display_data(city_name, data_dic):
         plt.text(rect.get_x() + rect.get_width() / 2, height + 1, str(height), ha="center", va="bottom")
     # plt.show('1366*768')
 
+    if False == os.path.exists("./result/"):
+        os.mkdir("./result/")
     plt.savefig('./result/' + title + '.png')
 
 
