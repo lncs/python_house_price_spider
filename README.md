@@ -1,2 +1,3 @@
-# python-house_price_spider
-爬取房价信息
+# 项目简介
+> data 文件夹存放爬取到的数据  
+> result 文件夹中为生成的分析图

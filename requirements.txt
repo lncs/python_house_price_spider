@@ -1,0 +1,4 @@
+pinyin==0.4.0
+pyquery==1.4.0
+requests==2.18.4
+threadpool==1.3.2
