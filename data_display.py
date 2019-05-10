@@ -20,13 +20,16 @@ def load_data(filename):
         data = json.loads(line)
     print(data)
     data_dic = {}
+    # print('总套数：{}'.format(len(data)))
     for i in range(len(data)):
-        price = (int)(data[i].get('price'))
-        area = data[i].get('area')
-        try:
-            data_dic[area].append(price)
-        except:
-            data_dic[area] = [price]
+        # 已下架房源中价格为空，不计入分析数据
+        if "" != data[i].get('price'):
+            price = (int)(data[i].get('price'))
+            area = data[i].get('area')
+            try:
+                data_dic[area].append(price)
+            except:
+                data_dic[area] = [price]
     print(data_dic)
     return data_dic
 
@@ -90,14 +93,15 @@ def display_data(file_name, data_dic):
     for rect in rects3:
         height = rect.get_height()
         plt.text(rect.get_x() + rect.get_width() / 2, height + 1, str(height), ha="center", va="bottom")
-    # plt.show('1366*768')
+
+    # plt.show()
 
     if False == os.path.exists("./result/"):
         os.mkdir("./result/")
     plt.savefig('./result/' + title + '.png')
 
 
-def main():
+def show_figure():
     file_list = os.listdir("./data")
     for i in range(len(file_list)):
         path = os.path.join('./data/' + file_list[i])
@@ -119,4 +123,4 @@ if __name__ == '__main__':
     # area_data = split_data(data_dic)
     # display_data('杭州', area_data)
     # print(area_data)
-    main()
+    show_figure()
