@@ -11,14 +11,11 @@ import constant
 import os
 import time
 
-USED_LIST = ['成都', '杭州', '重庆', '北京', '上海', '长沙', '西安', '兰州', ]
-# USED_LIST = ['重庆']
-
 
 def save_data(data, filename):
     if False == os.path.exists("./data/"):
         os.mkdir("./data/")
-    dest_name = "./data/" + filename + '(' +time.strftime("%Y-%m-%d") + ").json"
+    dest_name = "./data/" + filename + '(' + time.strftime("%Y-%m-%d") + ").json"
     with open(dest_name, 'w', encoding="utf8") as f:
         f.write(json.dumps(data, indent=2, ensure_ascii=False))
 
@@ -156,8 +153,8 @@ def parser_detail_page(res):
                 print("重试失败...")
 
 
-def main():
-    city_list = constant.get_info(USED_LIST)
+def start(city_list):
+    city_list = constant.get_info(city_list)
     print(city_list)
     for city_dic in city_list:
         # 获得二手房信息的起始页url
@@ -172,4 +169,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    USED_LIST = ['重庆']
+    start(USED_LIST)
