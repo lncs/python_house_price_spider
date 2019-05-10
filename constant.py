@@ -93,7 +93,7 @@ def get_info(in_param):
 
 def create_folder(dir_name):
     print(os.path.exists(dir_name))
-    if False == os.path.exists(dir_name):
+    if not os.path.exists(dir_name):
         os.mkdir(dir_name)
 
 
@@ -109,5 +109,5 @@ if __name__ == '__main__':
         '西安',
         '兰州',
     ]
-    print(get_info(USED_LIST))
+    # print(get_info(USED_LIST))
     create_folder('test')

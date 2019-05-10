@@ -13,7 +13,7 @@ import time
 
 
 def save_data(data, filename):
-    if False == os.path.exists("./data/"):
+    if not os.path.exists("./data/"):
         os.mkdir("./data/")
     dest_name = "./data/" + filename + '(' + time.strftime("%Y-%m-%d") + ").json"
     with open(dest_name, 'w', encoding="utf8") as f:
@@ -56,7 +56,6 @@ def get_page_url_list(city):
             page_url_list.append(url)
             # print(url)
         return page_url_list
-
     except:
         print("获取总套数出错,请确认起始URL是否正确")
         return None

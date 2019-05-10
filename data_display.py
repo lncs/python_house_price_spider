@@ -96,7 +96,7 @@ def display_data(file_name, data_dic):
 
     # plt.show()
 
-    if False == os.path.exists("./result/"):
+    if not os.path.exists("./result/"):
         os.mkdir("./result/")
     plt.savefig('./result/' + title + '.png')
 

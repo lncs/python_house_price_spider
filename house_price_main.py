@@ -12,7 +12,7 @@ USED_LIST = ['重庆']
 
 def main():
     # 获取链家网二手房房价信息保存到data文件夹中
-    # lianjia.start(USED_LIST)
+    lianjia.start(USED_LIST)
 
     # 将data文件夹中的数据进行分析，分析结果也图片形式保存在result文件夹中
     ds.show_figure()
