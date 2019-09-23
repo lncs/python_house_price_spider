@@ -55,7 +55,8 @@ def display_data(file_name, data_dic):
     min = []
     average = []
     label_list = data_dic.keys()
-    for label in label_list:
+    sorted_list = sorted(list(label_list))
+    for label in sorted_list:
         max.append(data_dic[label].get('max'))
         min.append(data_dic[label].get('min'))
         average.append(data_dic[label].get('average'))
@@ -78,7 +79,7 @@ def display_data(file_name, data_dic):
     参数一：中点坐标
     参数二：显示值
     """
-    plt.xticks([index + 0.25 for index in x], label_list)
+    plt.xticks([index + 0.25 for index in x], sorted_list)
     plt.xlabel("区域")
     title = "{}二手房价格分析图".format(file_name)
     plt.title(title)
@@ -118,9 +119,10 @@ def show_figure():
 
 
 if __name__ == '__main__':
-    # data_dic = load_data('result/杭州.json')
+    # data_dic = load_data('data/杭州(2019-09-23).json')
     # print(type(data_dic))
     # area_data = split_data(data_dic)
-    # display_data('杭州', area_data)
     # print(area_data)
+    # display_data('测试', area_data)
+    # # print(area_data)
     show_figure()
