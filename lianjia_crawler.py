@@ -10,6 +10,7 @@ import json
 import constant
 import os
 import time
+from logpublic import *
 
 
 def save_data(data, filename):
@@ -27,12 +28,11 @@ def get_valid_ip():
     try:
         ip = requests.get(url).text
         return ip
-    except:
-        print("请先运行代理池")
+    except Exception as e:
+        print("请先运行代理池", e)
 
 
-def get_page_url_list(city):
-    start_url = "https://{}.lianjia.com/ershoufang".format(city)
+def get_page_url_list(start_url):
     # print(start_url)
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
@@ -44,6 +44,8 @@ def get_page_url_list(city):
         total_num = int(doc(".resultDes .total span").text())
         total_page = total_num // 30 + 1
         # print('总套数：{}，总页数：{}'.format(total_num, total_page))
+        location = start_url.split('/')[2].split('.')[0]
+        app_logger.info('{}-二手房总套数:{}'.format(constant.get_name_from_pinyin(location), total_num))
 
         # 只能访问到前一百页
         if total_page > 100:
@@ -56,8 +58,48 @@ def get_page_url_list(city):
             page_url_list.append(url)
             # print(url)
         return page_url_list
-    except:
-        print("获取总套数出错,请确认起始URL是否正确")
+    except Exception as e:
+        app_logger.error('获取总套数出错,请确认起始URL是否正确:{}'.format(start_url), e)
+        return None
+
+
+def get_page_url_list_filter(start_url, filter_args):
+    '''
+    根据起始url开始获取数据，可以具体到某一城市的区域(拼音全拼)、售价(p)、房型(l)、面积(a)、标签(拼音简写)等
+    示例：https://cd.lianjia.com/ershoufang/wuhou/pg3l2l3/
+    :param start_url: 起始url
+    :param filter_args: 过滤参数
+    :return:
+    '''
+    start_url = start_url + '/' + filter_args
+    app_logger.info('入口url:{}'.format(start_url))
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+    }
+    try:
+        response = requests.get(start_url, headers=headers)
+        # print(response.status_code, response.text)
+        doc = pq(response.text)
+        total_num = int(doc(".resultDes .total span").text())
+        total_page = total_num // 30 + 1
+        # print('总套数：{}，总页数：{}'.format(total_num, total_page))
+        location = start_url.split('/')[2].split('.')[0]
+        app_logger.info('{}-当前筛选条件下房屋总套数:{}'.format(constant.get_name_from_pinyin(location), total_num))
+
+        # 只能访问到前一百页
+        if total_page > 100:
+            total_page = 100
+
+        page_url_list = list()
+
+        for i in range(total_page):
+            url = start_url + "/pg" + str(i + 1) + filter_args + "/"
+            page_url_list.append(url)
+            # print(url)
+        return page_url_list
+    except Exception as e:
+        app_logger.error('获取总套数出错,请确认起始URL是否正确:{}'.format(start_url), e)
+        # print("获取总套数出错,请确认起始URL是否正确")
         return None
 
 
@@ -89,8 +131,8 @@ def get_detail_page_url(page_url):
             detail_url = child_item.attr("href")
             detail_urls.append(detail_url)
         return detail_urls
-    except:
-        print("获取列表页" + page_url + "出错")
+    except Exception as e:
+        print("获取列表页" + page_url + "出错", e)
 
 
 def parser_detail_page(res):
@@ -123,8 +165,8 @@ def parser_detail_page(res):
 
             print(unit_price, title, area)
 
-        except:
-            print("获取详情页出错,换ip重试")
+        except Exception as e:
+            print("获取详情页出错,换ip重试", e)
             proxies = {
                 "http": "http://" + get_valid_ip(),
             }
@@ -148,8 +190,8 @@ def parser_detail_page(res):
                     detail_list.append(detail_dict)
 
                     print(unit_price, title, area)
-            except:
-                print("重试失败...")
+            except Exception as e:
+                print("重试失败...", e)
 
 
 def start(city_list):
@@ -157,8 +199,11 @@ def start(city_list):
     print(city_list)
     for city_dic in city_list:
         # 获得二手房信息的起始页url
-        page_url_list = get_page_url_list(city_dic['cshortpinyin'])
-        print(page_url_list)
+        start_url = "https://{}.lianjia.com/ershoufang".format(city_dic['cshortpinyin'])
+        app_logger.info('起始url:{}'.format(start_url))
+        page_url_list = get_page_url_list(start_url)
+        app_logger.info('url列表:{}'.format(page_url_list))
+        # print(page_url_list)
         with ThreadPoolExecutor(30) as executor:
             for page_url in page_url_list:
                 executor.submit(get_detail_page_url, page_url).add_done_callback(parser_detail_page)
@@ -167,6 +212,26 @@ def start(city_list):
         detail_list.clear()
 
 
+def start_detail_args(filename, start_url, filter_args):
+    '''
+    根据起始url开始获取数据，可以具体到某一城市的区域(拼音全拼)、售价(p)、房型(l)、面积(a)、标签(拼音简写)等
+    :param filename:数据保存的文件名
+    :param start_url:起始url
+    :param filter_args:筛选参数
+    :return:
+    '''
+    page_url_list = get_page_url_list_filter(start_url, filter_args)
+    app_logger.info('url列表:{}'.format(page_url_list))
+    # print(page_url_list)
+    with ThreadPoolExecutor(30) as executor:
+        for page_url in page_url_list:
+            executor.submit(get_detail_page_url, page_url).add_done_callback(parser_detail_page)
+
+    save_data(detail_list, filename)
+    detail_list.clear()
+
+
 if __name__ == '__main__':
-    USED_LIST = ['重庆']
+    USED_LIST = ['成都']
     start(USED_LIST)
+    start_detail_args('成都-武侯', 'https://cd.lianjia.com/ershoufang/wuhou', 'l2l3p2')

@@ -5,6 +5,7 @@
 
 import pinyin
 import os
+
 # 全国各省市的xinxi
 # ref: https://github.com/baixuexiyang/geocoord
 _PROVINCE_INFO = [
@@ -48,7 +49,6 @@ _PROVINCE_INFO = [
     {'province': '澳门', 'capital': '澳门', 'geoCoord': [113.54, 22.19], 'abbreviation': '澳'}
 ]
 
-
 PROVINCE_INFO = [
     {'capital': item['capital'],
      'cpinyin': pinyin.get(item['capital'], format="strip", delimiter=""),
@@ -91,6 +91,13 @@ def get_info(in_param):
     return result_info
 
 
+def get_name_from_pinyin(in_param):
+    for all_info in PROVINCE_INFO:
+        if all_info.get('cshortpinyin') == in_param:
+            print(all_info)
+            return all_info.get('capital')
+
+
 def create_folder(dir_name):
     print(os.path.exists(dir_name))
     if not os.path.exists(dir_name):
@@ -98,7 +105,6 @@ def create_folder(dir_name):
 
 
 if __name__ == '__main__':
-
     USED_LIST = [
         '成都',
         '杭州',
@@ -109,5 +115,6 @@ if __name__ == '__main__':
         '西安',
         '兰州',
     ]
+    get_name_from_pinyin('cd')
     # print(get_info(USED_LIST))
-    create_folder('test')
+    # create_folder('test')
